@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewData["Title"] = "DocumentGenerator";
+}
+
+<h2>DocumentGenerator</h2>
+
+@{
+    if (ViewData["Error"] != null)
+    {
+        <h3 class="text-danger">@ViewData["Error"]</h3>
+    }
+}
+
+<div class="row">
+    <div class="col-lg-6">
+        @using (Html.BeginForm("DocumentGenerator", "Documents", FormMethod.Post))
+        {
+            <input type="text" name="input" value='{
+                    "FirstName":"Zenek",
+                    "LastName":"Niewiem",
+                    "Email":"dududu@example.com"
+                    }' />
+            <input type="submit" class="btn btn-primary" />
+        }
+    </div>
+</div>
+
+
