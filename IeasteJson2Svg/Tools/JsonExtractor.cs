@@ -9,9 +9,9 @@ namespace IeasteJson2Svg.Tools
 {
     public class JsonExtractor
     {
-        public static Dictionary<string,string> GetJsonData(string JsonText)
+        public static Dictionary<string,string[]> GetJsonData(string JsonText)
         {
-            var dictionaryResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonText);
+            var dictionaryResult = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(JsonText);
             return dictionaryResult;
         }
     }

@@ -10,13 +10,13 @@ namespace IeasteJson2Svg.Tools
 {
     public class SvgEditor
     {
-        public static async Task<MemoryStream> SetDocumentElements(SvgDocumentEditModel model)
+        public static MemoryStream GenerateSvgDocument(SvgDocumentEditModel model)
         {
             string tag = model.ElementName;
             string attribute = model.Attribute;
 
             XmlDocument doc = new XmlDocument();
-            doc.Load(model.Filename);
+            doc.Load(model.TemplateDocumentPath);
 
             var elementList = doc.GetElementsByTagName(tag);
 
@@ -25,7 +25,7 @@ namespace IeasteJson2Svg.Tools
                 string idValue = elementList[i].Attributes[attribute].Value;
                 if (model.ElementsForSubstitution.ContainsKey(idValue))
                 {
-                    elementList[i].InnerText = model.ElementsForSubstitution[idValue];
+                    elementList[i].InnerText = model.ElementsForSubstitution[idValue][model.ValueIndex];
                 }
             }
             var memory = new MemoryStream();
