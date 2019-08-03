@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewData["Title"] = "Generate document";
+}
+
+<h2>DocumentGenerator</h2>
+
+@{
+    if (ViewData["Error"] != null)
+    {
+        <h3 class="text-danger">@ViewData["Error"]</h3>
+    }
+}
+
+<div class="row">
+    <div class="col-lg-6">
+        @using (Html.BeginForm("GenerateDocument", "DocumentsGenerator", FormMethod.Post,new {id = "JsonForm" }))
+        {
+        <textarea type="text" form="JsonForm" name="input" rows="10" cols="50">
+                    {
+                    "FirstName":["Zenek","Kamil","Stefan"],
+                    "LastName":["Niewiem","Tez nie wiem","Jakis last name"],
+                    "Email":["dududu@example.com"," jakisemail@mail.com","innymail@example.com"]
+                    }
+            </textarea>
+            <input type="submit" class="btn btn-primary" />
+        }
+    </div>
+</div>
+
+
