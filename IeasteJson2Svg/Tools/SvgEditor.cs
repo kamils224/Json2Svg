@@ -35,5 +35,24 @@ namespace IeasteJson2Svg.Tools
             memory.Position = 0;
             return memory;
         }
+
+        public static List<XmlNode> FindEditableElements(string tag, string attribute, string svgFilePath)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(svgFilePath);
+
+            var elementList = doc.GetElementsByTagName(tag);
+            List<XmlNode> resultList = new List<XmlNode>();
+            for (int i = 0; i < elementList.Count; i++)
+            {
+                string idValue = elementList[i].Attributes[attribute].Value;
+                if (!string.IsNullOrEmpty(idValue))
+                {
+                    resultList.Add(elementList[i]);
+                }
+            }
+
+            return resultList;
+        }
     }
 }

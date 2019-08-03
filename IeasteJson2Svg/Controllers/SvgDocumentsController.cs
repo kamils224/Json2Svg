@@ -10,6 +10,7 @@ using IeasteJson2Svg.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using IeasteJson2Svg.Tools;
 
 namespace IeasteJson2Svg.Controllers
 {
@@ -43,6 +44,11 @@ namespace IeasteJson2Svg.Controllers
             {
                 return NotFound();
             }
+
+            string pathToFile = _hostingEnvironment.WebRootPath + svgDocument.DocumentPath;
+            var editableElements = SvgEditor.FindEditableElements("text", "id", pathToFile);
+
+            ViewData["Elements"] = editableElements;
 
             return View(svgDocument);
         }
