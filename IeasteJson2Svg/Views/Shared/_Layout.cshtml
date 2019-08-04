@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - IeasteJson2Svg</title>
+    <title>@ViewData["Title"] - Json2Svg</title>
     <link rel="stylesheet" href="~/css/svg_document.css" />
     <environment include="Development">
         <script language="JavaScript" type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
@@ -27,11 +27,12 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">IeasteJson2Svg</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Json2Svg - main page</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="SvgDocuments" asp-action="Index">Documents</a></li>
+                    <li><a asp-area="" asp-controller="SvgElements" asp-action="Index">Elements</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                 </ul>
@@ -45,7 +46,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2019 - IeasteJson2Svg</p>
+            <p>&copy; 2019 - Json2Svg</p>
         </footer>
     </div>
 

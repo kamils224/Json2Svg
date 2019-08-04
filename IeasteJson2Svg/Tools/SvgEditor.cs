@@ -36,10 +36,8 @@ namespace IeasteJson2Svg.Tools
             return memory;
         }
 
-        public static List<XmlNode> FindEditableElements(string tag, string attribute, string svgFilePath)
+        public static List<XmlNode> FindEditableElements(XmlDocument doc,string tag, string attribute)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(svgFilePath);
 
             var elementList = doc.GetElementsByTagName(tag);
             List<XmlNode> resultList = new List<XmlNode>();

@@ -9,12 +9,14 @@ namespace IeasteJson2Svg
 {
     public class DocumentsContainerContext : DbContext
     {
-
+        public DbSet<SvgDocument> SvgDocuments { get; set; }
+        public DbSet<SvgElement> SvgElements { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite("Filename=DocumentsContainer.db");
         }
 
-        public DbSet<SvgDocument> SvgDocuments { get; set; }
+
+        
     }
 }

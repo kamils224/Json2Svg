@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using IeasteJson2Svg.Tools;
+using System.Xml;
 
 namespace IeasteJson2Svg.Controllers
 {
@@ -46,7 +47,9 @@ namespace IeasteJson2Svg.Controllers
             }
 
             string pathToFile = _hostingEnvironment.WebRootPath + svgDocument.DocumentPath;
-            var editableElements = SvgEditor.FindEditableElements("text", "id", pathToFile);
+            XmlDocument doc = new XmlDocument();
+            doc.Load(pathToFile);
+            var editableElements = SvgEditor.FindEditableElements(doc,"text", "id");
 
             ViewData["Elements"] = editableElements;
 
@@ -77,17 +80,38 @@ namespace IeasteJson2Svg.Controllers
                 string globalPath = _hostingEnvironment.WebRootPath + localPath; 
                 svgDocument.DocumentPath = localPath;
 
+                if (ModelState.IsValid)
+                {
+                    _context.Add(svgDocument);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    return View(svgDocument);
+                }
+
                 using (FileStream fs = new FileStream(globalPath, FileMode.Create))
                 {
                     await file.CopyToAsync(fs);
                 }
 
-                if (ModelState.IsValid)
+                XmlDocument doc = new XmlDocument();
+                doc.Load(globalPath);
+                var editableElements = SvgEditor.FindEditableElements(doc, "text", "id");
+
+                for (int i = 0; i < editableElements.Count; i++)
                 {
-                    _context.Add(svgDocument);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    SvgElement element = new SvgElement()
+                    {
+                        DocumentId = svgDocument.ID,
+                        AttributeName = editableElements[i].Attributes["id"].Value,
+                        AttributeInnerText = editableElements[i].InnerText
+                    };
+                    _context.SvgElements.Add(element);
                 }
+                _context.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
             }
 
             return View(svgDocument);
@@ -169,6 +193,8 @@ namespace IeasteJson2Svg.Controllers
         {
             var svgDocument = await _context.SvgDocuments.FindAsync(id);
             _context.SvgDocuments.Remove(svgDocument);
+
+            _context.SvgElements.RemoveRange(_context.SvgElements.Where(el => el.DocumentId == id));
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
