@@ -105,7 +105,8 @@ namespace IeasteJson2Svg.Controllers
                     {
                         DocumentId = svgDocument.ID,
                         AttributeName = editableElements[i].Attributes["id"].Value,
-                        AttributeInnerText = editableElements[i].InnerText
+                        AttributeInnerText = editableElements[i].InnerText,
+                        IsActive = true
                     };
                     _context.SvgElements.Add(element);
                 }

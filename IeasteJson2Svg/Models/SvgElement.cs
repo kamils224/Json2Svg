@@ -15,5 +15,7 @@ namespace IeasteJson2Svg.Models
         public string AttributeName { get; set; }
         [Display(Name = "Inner text")]
         public string AttributeInnerText { get; set; }
+        [Display(Name = "Is active")]
+        public bool IsActive { get; set; }
     }
 }

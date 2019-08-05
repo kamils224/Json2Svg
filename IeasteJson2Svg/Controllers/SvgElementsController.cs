@@ -54,7 +54,7 @@ namespace IeasteJson2Svg.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DocumentId,AttributeName,AttributeInnerText")] SvgElement svgElement)
+        public async Task<IActionResult> Create([Bind("Id,DocumentId,AttributeName,AttributeInnerText,IsActive")] SvgElement svgElement)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace IeasteJson2Svg.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DocumentId,AttributeName,AttributeInnerText")] SvgElement svgElement)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DocumentId,AttributeName,AttributeInnerText,IsActive")] SvgElement svgElement)
         {
             if (id != svgElement.Id)
             {
