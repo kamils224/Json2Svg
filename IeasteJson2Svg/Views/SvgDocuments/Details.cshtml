@@ -38,6 +38,9 @@
         var elements = ViewData["Elements"] as List<SvgElement>;
     }
 <div class="row well center-block">
+    <div id="alert" class="alert alert-info text-center" role="alert" hidden>
+        Alert
+    </div>
     <h3 class="list-heading text-center">Found elements</h3>
     <table class="table">
         <thead>
@@ -60,32 +63,37 @@
         <tbody>
             @for (int i = 0; i < elements.Count; i++)
             {
-            <tr class="elementRow">
-                <td>
-                    <input class="elementId" type="hidden" value="@elements[i].Id"/>
-                    @elements[i].AttributeName
-                </td>
-                <td class="innerText">
-                    @elements[i].AttributeInnerText
-                </td>
-                <td>
-                    @if (elements[i].IsActive)
-                    {
-                        <span class="glyphicon glyphicon-plus" style="color: green"></span>
-                    }
-                    else
-                    {
-                        <span class="glyphicon glyphicon-minus" style="color: red"></span>
-                    }
-                </td>
-                <td>
-                    @Html.CheckBox("isactive", elements[i].IsActive,new {@class="isActive" })
-                </td>
-            </tr>
+                <tr class="elementRow">
+                    <td>
+                        <input class="elementId" type="hidden" value="@elements[i].Id" />
+                        @elements[i].AttributeName
+                    </td>
+                    <td class="innerText">
+                        @elements[i].AttributeInnerText
+                    </td>
+                    <td>
+                        @if (elements[i].IsActive)
+                        {
+                            <span class="glyphicon glyphicon-plus" style="color: green"></span>
+                        }
+                        else
+                        {
+                            <span class="glyphicon glyphicon-minus" style="color: red"></span>
+                        }
+                    </td>
+                    <td>
+                        @Html.CheckBox("isactive", elements[i].IsActive, new { @class = "isActive" })
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
-    <button id="submitBtn" class="btn btn-primary" onclick="set_elements_state()">Save changes</button>
+    <div class="row">
+        <div class="text-center">
+            <button id="submitBtn" class="btn btn-primary" onclick="set_elements_state()">Save changes</button>
+        </div>
+    </div>
+
 </div>
 </div>
 
@@ -115,6 +123,9 @@
                 $('#submitBtn').attr("disabled", false);
                 $('.isActive').attr("disabled", false);
                 change_glyphicons();
+                var alert = $('#alert');
+                alert.html(result.message);
+                alert.show();
             }
         });
         }
