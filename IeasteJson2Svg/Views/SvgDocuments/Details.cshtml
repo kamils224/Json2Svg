@@ -34,21 +34,105 @@
             <img class="center-block" src="@Model.DocumentPath" style="border:2px solid #021a40" />
         </div>
     </div>
-    <div class="row well center-block">
-        <h3 class="list-heading text-center">Found elements</h3>
-        <ul class="list-group">
-            @{
-                if (ViewData["Elements"] != null)
-                {
-                    var elements = ViewData["Elements"] as List<XmlNode>;
-                    for (int i = 0; i < elements.Count; i++)
+    @{ 
+        var elements = ViewData["Elements"] as List<SvgElement>;
+    }
+<div class="row well center-block">
+    <h3 class="list-heading text-center">Found elements</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Attribute name
+                </th>
+                <th>
+                    Attribute inner text
+                </th>
+                <th>
+                    Currently used
+                </th>
+                <th>
+                    Change state
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < elements.Count; i++)
+            {
+            <tr class="elementRow">
+                <td>
+                    <input class="elementId" type="hidden" value="@elements[i].Id"/>
+                    @elements[i].AttributeName
+                </td>
+                <td class="innerText">
+                    @elements[i].AttributeInnerText
+                </td>
+                <td>
+                    @if (elements[i].IsActive)
                     {
-                        <li class="list-group-item"> @elements[i].Attributes["id"].Value &nbsp;: @elements[i].InnerText</li>
+                        <span class="glyphicon glyphicon-plus" style="color: green"></span>
                     }
-                }
+                    else
+                    {
+                        <span class="glyphicon glyphicon-minus" style="color: red"></span>
+                    }
+                </td>
+                <td>
+                    @Html.CheckBox("isactive", elements[i].IsActive,new {@class="isActive" })
+                </td>
+            </tr>
             }
-        </ul>
-
-    </div>
-
+        </tbody>
+    </table>
+    <button id="submitBtn" class="btn btn-primary" onclick="set_elements_state()">Save changes</button>
 </div>
+</div>
+
+<script>
+
+    function set_elements_state() {
+        data = new Object();
+        var elementsDOM = $(".elementRow");
+        for (var i = 0; i < elementsDOM.length; i++) {
+
+            var id = parseInt(elementsDOM[i].querySelector(".elementId").value);
+            var isActive = elementsDOM[i].querySelector(".isActive").checked;
+            data["elements[" + i + "].Key"] = id;
+            data["elements[" + i + "].Value"] = isActive;
+        }
+
+        $('#submitBtn').attr("disabled", true);
+        $('.isActive').attr("disabled", true);
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SetActiveElements","SvgElements")',
+            data: data,
+            traditional: true,
+        dataType: "json",
+            success: function (result) {
+                $('#submitBtn').attr("disabled", false);
+                $('.isActive').attr("disabled", false);
+                change_glyphicons();
+            }
+        });
+        }
+
+    function change_glyphicons() {
+        var rows = $('.elementRow');
+
+        for (var i = 0; i < rows.length; i++) {
+            if (rows[i].querySelector('.isActive').checked) {
+                var span = rows[i].querySelector('span');
+                span.className = "glyphicon glyphicon-plus";
+                span.style = "color: green";
+            } else {
+                var span = rows[i].querySelector('span');
+                span.className = "glyphicon glyphicon-minus";
+                span.style = "color: red";
+            }
+        }
+    }
+
+</script>

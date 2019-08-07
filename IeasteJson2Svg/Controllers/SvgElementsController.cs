@@ -116,6 +116,28 @@ namespace IeasteJson2Svg.Controllers
             return View(svgElement);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SetActiveElements(Dictionary<int,bool> elements)
+        {
+            try
+            {
+                var elementsToEdit = _context.SvgElements.Where(c => elements.ContainsKey(c.Id)).ToList();
+                for (int i = 0; i < elementsToEdit.Count; i++)
+                {
+                    elementsToEdit[i].IsActive = elements[elementsToEdit[i].Id];
+                }
+
+                _context.UpdateRange(elementsToEdit);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return Json(new { message = e.Message });
+            }
+
+            return Json(new { message = "Successfully updated document elements" });
+        }
+
         // GET: SvgElements/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

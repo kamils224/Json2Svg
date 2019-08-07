@@ -49,7 +49,7 @@ namespace IeasteJson2Svg.Controllers
             string pathToFile = _hostingEnvironment.WebRootPath + svgDocument.DocumentPath;
             XmlDocument doc = new XmlDocument();
             doc.Load(pathToFile);
-            var editableElements = SvgEditor.FindEditableElements(doc,"text", "id");
+            var editableElements = _context.SvgElements.Where(x => x.DocumentId == id).OrderByDescending(x => x.IsActive).ToList();
 
             ViewData["Elements"] = editableElements;
 
