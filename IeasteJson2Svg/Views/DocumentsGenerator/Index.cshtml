@@ -3,7 +3,7 @@
     ViewData["Title"] = "Generate document";
 }
 
-<h2>DocumentGenerator</h2>
+<h2>Document Generator</h2>
 
 @{
     if (ViewData["Error"] != null)
@@ -13,19 +13,61 @@
 }
 
 <div class="row">
-    <div class="col-lg-6">
-        @using (Html.BeginForm("GenerateDocument", "DocumentsGenerator", FormMethod.Post,new {id = "JsonForm" }))
+    <div class="col-lg-12">
+        <h3>Input</h3>
+        @using (Html.BeginForm("GenerateDocument", "DocumentsGenerator", FormMethod.Post, new { id = "JsonForm" }))
         {
-        <textarea type="text" form="JsonForm" name="input" rows="10" cols="50">
+            <textarea onchange="TextAreaChange()" placeholder="Type your JSON here" id="inputJson" type="text" form="JsonForm" name="input" rows="10" style="width:100%">
                     {
                     "FirstName":["Zenek","Kamil","Stefan"],
                     "LastName":["Niewiem","Tez nie wiem","Jakis last name"],
                     "Email":["dududu@example.com"," jakisemail@mail.com","innymail@example.com"]
                     }
             </textarea>
-            <input type="submit" class="btn btn-primary" />
+            <button type="button" onclick="TextAreaChange()" id="btnCheck" class="btn btn-success">Check input</button>
+            <input id="btnSubmit" type="submit" class="btn btn-primary" value="Submit" />
+            <div id="message" style="display:inline-block; color:red"></div>
         }
+
+
     </div>
 </div>
+
+<h3>Formatted view</h3>
+<div id="json"></div>
+
+<script>
+
+        var jsonObj = {};
+        var textarea = document.querySelector("#inputJson");
+        var jsonViewer = new JSONViewer();
+        var btnSubmit = document.getElementById('btnSubmit');
+        var msg = document.getElementById('message');
+        btnSubmit.disabled = true;
+        document.querySelector("#json").appendChild(jsonViewer.getContainer());
+        
+        var TextAreaChange = function () {
+
+            var setJSON = function () {
+            try {
+                var value = textarea.value;
+                jsonObj = JSON.parse(value);
+                }
+            catch (err) {
+                btnSubmit.disabled = true;
+                msg.innerHTML = "Invalid JSON format!";
+                return;
+                }
+                btnSubmit.disabled = false;
+                msg.innerHTML = "";
+            };
+
+            setJSON();
+            jsonViewer.showJSON(jsonObj);
+        }
+
+        TextAreaChange();
+
+</script>
 
 
