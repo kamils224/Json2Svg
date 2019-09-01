@@ -13,9 +13,11 @@ namespace IeasteJson2Svg.Controllers
     public class DocumentsGeneratorController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-        public DocumentsGeneratorController(IHostingEnvironment hostingEnvironment)
+        private readonly DocumentsContainerContext _context;
+        public DocumentsGeneratorController(DocumentsContainerContext context,IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
+            _context = context;
         }
 
         [HttpGet]
@@ -26,13 +28,44 @@ namespace IeasteJson2Svg.Controllers
                 return NotFound();
             }
 
-            SvgDocumentEditModel model = new SvgDocumentEditModel();
+            if (int.TryParse(id, out int docId))
+            {
+                SvgDocument document = _context.SvgDocuments.Where(x => x.ID == docId).FirstOrDefault();
+                if (document != null)
+                {
+                    ViewData["DocumentDetails"] = document;
+                }
+                else
+                {
+                    return NotFound();
+                }
+                List<SvgElement> documentElements = _context.SvgElements
+                    .Where(x => x.DocumentId == docId && x.IsActive).ToList();
+                Dictionary<string, string[]> exampleJsonDict = new Dictionary<string, string[]>();
+                int numOfExamples = 5;
+                for (int i = 0; i < documentElements.Count; i++)
+                {
+                    string[] examples = new string[numOfExamples];
+                    for (int j = 0; j < numOfExamples; j++)
+                    {
+                        examples[j] = "example" + j;
+                    }
+                    exampleJsonDict.Add(documentElements[i].AttributeName, examples);
+                }
 
+                ViewData["ExampleJson"] = JsonExtractor.GetJsonString(exampleJsonDict);
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            SvgDocumentEditModel model = new SvgDocumentEditModel();
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult GenerateDocument(string input)
+        public IActionResult GenerateDocument(string input, string docId)
         {
             Dictionary<string, string[]> jsonInput;
             try
@@ -41,8 +74,8 @@ namespace IeasteJson2Svg.Controllers
             }
             catch (Exception e)
             {
-                ViewData["Error"] = e.Message;
-                return View();
+                var error = e.Message;
+                return Content(error);
             }
 
             string directory = _hostingEnvironment.WebRootPath + "/documents/";
@@ -52,16 +85,20 @@ namespace IeasteJson2Svg.Controllers
             int index = 0;
             List<ZipItem> outputFiles = new List<ZipItem>();
 
+            
             foreach (var item in jsonInput)
             {
                 int currentLength = item.Value.Length;
                 if (currentLength != max)
                 {
-                    ViewData["Error"] = "Value array error in column: " + item.Key + ". Expected length: " + max
+                    var error = "Value array error in column: " + item.Key + ". Expected length: " + max
                         + ", current length: " + currentLength;
-                    return View();
+                    return Content(error);
                 }
-
+            }
+            
+            for (int i = 0; i < max; i++)
+            {
                 SvgDocumentEditModel model = new SvgDocumentEditModel()
                 {
                     TemplateDocumentPath = path,
@@ -71,7 +108,7 @@ namespace IeasteJson2Svg.Controllers
                     ElementsForSubstitution = jsonInput
                 };
                 index++;
-                ZipItem zipItem = new ZipItem("Document" + index+".svg", SvgEditor.GenerateSvgDocument(model));
+                ZipItem zipItem = new ZipItem("Document" + index + ".svg", SvgEditor.GenerateSvgDocument(model));
                 outputFiles.Add(zipItem);
             }
 

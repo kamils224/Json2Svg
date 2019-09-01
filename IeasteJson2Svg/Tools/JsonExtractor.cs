@@ -14,5 +14,11 @@ namespace IeasteJson2Svg.Tools
             var dictionaryResult = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(JsonText);
             return dictionaryResult;
         }
+
+        public static string GetJsonString(Dictionary<string, string[]> model)
+        {
+            var json = JsonConvert.SerializeObject(model);
+            return json;
+        }
     }
 }

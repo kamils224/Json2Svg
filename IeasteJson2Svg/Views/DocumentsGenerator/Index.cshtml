@@ -1,35 +1,31 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Generate document";
 }
 
-<h2>Document Generator</h2>
 
 @{
-    if (ViewData["Error"] != null)
-    {
-        <h3 class="text-danger">@ViewData["Error"]</h3>
-    }
-}
 
+    var document = ViewData["DocumentDetails"] as SvgDocument;
+    string exampleJson = ViewData["ExampleJson"] as string;
+}
+<div class="row">
+    <div class="col-lg-12 text-center">
+        <h3>@document.DocumentName</h3>
+        <h4>@document.Description</h4>
+    </div>
+</div>
 <div class="row">
     <div class="col-lg-12">
         <h3>Input</h3>
         @using (Html.BeginForm("GenerateDocument", "DocumentsGenerator", FormMethod.Post, new { id = "JsonForm" }))
         {
-            <textarea onchange="TextAreaChange()" placeholder="Type your JSON here" id="inputJson" type="text" form="JsonForm" name="input" rows="10" style="width:100%">
-                    {
-                    "FirstName":["Zenek","Kamil","Stefan"],
-                    "LastName":["Niewiem","Tez nie wiem","Jakis last name"],
-                    "Email":["dududu@example.com"," jakisemail@mail.com","innymail@example.com"]
-                    }
-            </textarea>
+            <input type="hidden" name="docId" value="@document.ID" />
+            <textarea onchange="TextAreaChange()" placeholder="Type your JSON here" id="inputJson" type="text" form="JsonForm" name="input" rows="10" style="width:100%"></textarea>
+            <button type="button" id="btnExampleJson" class="btn btn-danger" onclick="setExampleJson()">Example JSON</button>
             <button type="button" onclick="TextAreaChange()" id="btnCheck" class="btn btn-success">Check input</button>
             <input id="btnSubmit" type="submit" class="btn btn-primary" value="Submit" />
             <div id="message" style="display:inline-block; color:red"></div>
         }
-
-
     </div>
 </div>
 
@@ -65,8 +61,14 @@
             setJSON();
             jsonViewer.showJSON(jsonObj);
         }
+    
+    var jsonExample =  @Html.Raw(Json.Serialize(exampleJson));
 
+    var setExampleJson = function () {
+        $('#inputJson').val(jsonExample);
         TextAreaChange();
+    }
+        
 
 </script>
 

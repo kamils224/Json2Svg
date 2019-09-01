@@ -12,6 +12,7 @@ namespace IeasteJson2Svg.Tools
     {
         public static MemoryStream GenerateSvgDocument(SvgDocumentEditModel model)
         {
+            
             string tag = model.ElementName;
             string attribute = model.Attribute;
 
