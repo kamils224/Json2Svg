@@ -22,12 +22,20 @@ namespace IeasteJson2Svg.Controllers
         // GET: SvgElements
         public async Task<IActionResult> Index()
         {
+            if(!User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
             return View(await _context.SvgElements.ToListAsync());
         }
 
         // GET: SvgElements/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
             if (id == null)
             {
                 return NotFound();
@@ -46,6 +54,10 @@ namespace IeasteJson2Svg.Controllers
         // GET: SvgElements/Create
         public IActionResult Create()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
             return View();
         }
 
@@ -56,6 +68,10 @@ namespace IeasteJson2Svg.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DocumentId,AttributeName,AttributeInnerText,IsActive")] SvgElement svgElement)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
             if (ModelState.IsValid)
             {
                 _context.Add(svgElement);
@@ -68,6 +84,10 @@ namespace IeasteJson2Svg.Controllers
         // GET: SvgElements/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
             if (id == null)
             {
                 return NotFound();
@@ -88,6 +108,10 @@ namespace IeasteJson2Svg.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,DocumentId,AttributeName,AttributeInnerText,IsActive")] SvgElement svgElement)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
             if (id != svgElement.Id)
             {
                 return NotFound();
@@ -141,6 +165,10 @@ namespace IeasteJson2Svg.Controllers
         // GET: SvgElements/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
             if (id == null)
             {
                 return NotFound();
