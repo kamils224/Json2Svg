@@ -30,6 +30,24 @@ namespace IeasteJson2Svg.Migrations
 
                     b.ToTable("SvgDocuments");
                 });
+
+            modelBuilder.Entity("IeasteJson2Svg.Models.SvgElement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AttributeInnerText");
+
+                    b.Property<string>("AttributeName");
+
+                    b.Property<int>("DocumentId");
+
+                    b.Property<bool>("IsActive");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SvgElements");
+                });
 #pragma warning restore 612, 618
         }
     }

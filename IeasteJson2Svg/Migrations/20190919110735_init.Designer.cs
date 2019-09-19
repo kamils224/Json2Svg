@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IeasteJson2Svg.Migrations
 {
     [DbContext(typeof(DocumentsContainerContext))]
-    [Migration("20190803162203_Migration1")]
-    partial class Migration1
+    [Migration("20190919110735_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,24 @@ namespace IeasteJson2Svg.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("SvgDocuments");
+                });
+
+            modelBuilder.Entity("IeasteJson2Svg.Models.SvgElement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AttributeInnerText");
+
+                    b.Property<string>("AttributeName");
+
+                    b.Property<int>("DocumentId");
+
+                    b.Property<bool>("IsActive");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SvgElements");
                 });
 #pragma warning restore 612, 618
         }
