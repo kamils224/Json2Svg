@@ -122,7 +122,8 @@ namespace IeasteJson2Svg.Controllers
                 //readySvgDocument.Close();
             }
 
-            return File(resultZip, "application/octet-stream", "Documents.zip");
+            var resultZip = Zipper.Zip(outputFiles);
+            return File(resultZip, "application/octet-stream","Documents.zip");
         }
 
         private string GetContentType(string path)
