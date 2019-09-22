@@ -5,6 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using Svg;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace IeasteJson2Svg.Tools
 {
@@ -52,6 +55,16 @@ namespace IeasteJson2Svg.Tools
             }
 
             return resultList;
+        }
+
+        public static MemoryStream SvgToJpeg(Stream svgDoc)
+        {
+            var document = Svg.SvgDocument.Open<Svg.SvgDocument>(svgDoc);
+            document.ShapeRendering = SvgShapeRendering.Auto;
+            Bitmap bmp = document.Draw(12,12);
+            MemoryStream stream = new MemoryStream();
+            bmp.Save(stream, ImageFormat.Jpeg);
+            return stream;
         }
     }
 }

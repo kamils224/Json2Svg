@@ -14,7 +14,7 @@ namespace IeasteJson2Svg.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly DocumentsContainerContext _context;
-        public DocumentsGeneratorController(DocumentsContainerContext context,IHostingEnvironment hostingEnvironment)
+        public DocumentsGeneratorController(DocumentsContainerContext context, IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
@@ -53,24 +53,28 @@ namespace IeasteJson2Svg.Controllers
                     exampleJsonDict.Add(documentElements[i].AttributeName, examples);
                 }
 
-                ViewData["ExampleJson"] = JsonExtractor.GetJsonString(exampleJsonDict);
+                ViewData["ExampleJson"] = DataExtractor.GetJsonString(exampleJsonDict);
             }
             else
             {
                 return NotFound();
             }
 
-            SvgDocumentEditModel model = new SvgDocumentEditModel();
+            SvgDocumentForm model = new SvgDocumentForm
+            {
+                DocId = docId
+            };
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult GenerateDocument(string input, string docId)
+        public IActionResult GenerateDocument([Bind("DocId, InputText, OutputType")]SvgDocumentForm svgDocument)
         {
             Dictionary<string, string[]> jsonInput;
+            int documentId = svgDocument.DocId;
             try
             {
-                jsonInput = JsonExtractor.GetJsonData(input);
+                jsonInput = DataExtractor.GetJsonData(svgDocument.InputText);
             }
             catch (Exception e)
             {
@@ -78,8 +82,9 @@ namespace IeasteJson2Svg.Controllers
                 return Content(error);
             }
 
-            string directory = _hostingEnvironment.WebRootPath + "/documents/";
-            string path = directory + "test.svg";
+            var document = _context.SvgDocuments.Find(documentId);
+
+            string path = _hostingEnvironment.WebRootPath + document.DocumentPath;
 
             int max = jsonInput.First().Value.Length;
             int index = 0;
@@ -108,13 +113,16 @@ namespace IeasteJson2Svg.Controllers
                     ElementsForSubstitution = jsonInput
                 };
                 index++;
-                ZipItem zipItem = new ZipItem("Document" + index + ".svg", SvgEditor.GenerateSvgDocument(model));
+
+                MemoryStream readySvgDocument = SvgEditor.GenerateSvgDocument(model);
+                //MemoryStream jpegDocument = SvgEditor.SvgToJpeg(readySvgDocument);
+                ZipItem zipItem = new ZipItem("Document" + index + ".svg", readySvgDocument);
                 outputFiles.Add(zipItem);
+                //jpegDocument.Close();
+                //readySvgDocument.Close();
             }
 
-            var resultZip = Zipper.Zip(outputFiles);
-
-            return File(resultZip, "application/octet-stream","Documents.zip");
+            return File(resultZip, "application/octet-stream", "Documents.zip");
         }
 
         private string GetContentType(string path)

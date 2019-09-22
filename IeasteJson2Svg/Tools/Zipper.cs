@@ -21,6 +21,7 @@ namespace IeasteJson2Svg.Tools
                     using (var entryStream = entry.Open())
                     {
                         zipItems[i].Content.CopyTo(entryStream);
+                        zipItems[i].Content.Close();
                     }
                 }
             }
